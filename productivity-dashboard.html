@@ -698,7 +698,61 @@
         // Each entry: { title, time ('9:00 AM' or 'All Day'), calendar, date ('YYYY-MM-DD') }
         // The TODAY panel filters to show only entries matching today's date.
         const CALENDAR_EVENTS = [
-            // { title: 'Example event', time: '9:00 AM', calendar: 'Personal', date: '2026-05-27' },
+            // ── May 27 (Today) ──
+            { title: "Kyle's birthday — noon cake pick up", time: 'All Day', calendar: 'Josh & Ruth', date: '2026-05-27' },
+            { title: 'Josh hand therapy', time: '10:30 AM', calendar: 'Josh & Ruth', date: '2026-05-27' },
+            { title: 'Ivan baseball practice', time: '5:00 PM', calendar: 'Josh & Ruth', date: '2026-05-27' },
+            { title: "Backyard BBQ — Josh kids / Kyle bday", time: '6:00 PM', calendar: 'Josh & Ruth', date: '2026-05-27' },
+            // ── May 29 ──
+            { title: 'GIG — Grift at Old Lantern (Charlotte, VT)', time: '7:00 PM', calendar: 'Grift', date: '2026-05-29' },
+            { title: 'Josh singing MCS Field Day', time: '2:00 PM', calendar: 'Josh & Ruth', date: '2026-05-29' },
+            // ── May 30 ──
+            { title: 'GIG — Grift Wedding: Nate Reit + Caeli (Wilburton Inn, Manchester VT)', time: 'All Day', calendar: 'Grift', date: '2026-05-30' },
+            // ── May 31 ──
+            { title: 'Josh hosting Lake Monsters MCS', time: '5:05 PM', calendar: 'Josh & Ruth', date: '2026-05-31' },
+            // ── Jun 5 ──
+            { title: "Otis birthday at Sparetime", time: '4:00 PM', calendar: 'Josh & Ruth', date: '2026-06-05' },
+            // ── Jun 6 ──
+            { title: 'GIG — Grift: Middlebury Reunion', time: '8:30 PM', calendar: 'Grift', date: '2026-06-06' },
+            // ── Jun 10 ──
+            { title: 'GIG — Grift: Mater Christi School Event (5-8pm)', time: '5:00 PM', calendar: 'Grift', date: '2026-06-10' },
+            // ── Jun 11 ──
+            { title: "GIG — Josh Panda Trio: Halverson's", time: 'TBD', calendar: 'Grift', date: '2026-06-11' },
+            // ── Jun 13 ──
+            { title: 'GIG — Grift Wedding: Caroline + Eric (Spruce Peak)', time: 'All Day', calendar: 'Grift', date: '2026-06-13' },
+            // ── Jun 18 ──
+            { title: 'GIG — Grift: RJ Thompson / Vermont Huts (West Monitor Barn, 6-9pm)', time: '6:00 PM', calendar: 'Grift', date: '2026-06-18' },
+            // ── Jun 20 ──
+            { title: 'GIG — Grift Wedding: Sasha Kahan + Sam Kater (Strafford, VT)', time: 'All Day', calendar: 'Grift', date: '2026-06-20' },
+            { title: 'GIG — Grift Wedding: Mary Richardson + Andrew Larsen (Fable Farm, Barnard VT)', time: 'All Day', calendar: 'Grift', date: '2026-06-20' },
+            // ── Jun 26 ──
+            { title: 'GIG — JPB at Talta', time: 'All Day', calendar: 'Grift', date: '2026-06-26' },
+            // ── Jun 27 ──
+            { title: "GIG — Grift Wedding: Kathryn Barry + Seamus O'Neill (Edson Hill)", time: 'All Day', calendar: 'Grift', date: '2026-06-27' },
+            // ── Jun 28 ──
+            { title: "GIG — Grift: Doug Neede Birthday Party (North Hero, VT)", time: 'All Day', calendar: 'Grift', date: '2026-06-28' },
+            // ── Jul 1 ──
+            { title: 'GIG — Honeywell: Sugarbush Mountain Tavern', time: 'All Day', calendar: 'Grift', date: '2026-07-01' },
+            // ── Jul 2 ──
+            { title: 'GIG — Neon Ramblers: Burlington Country Club', time: 'All Day', calendar: 'Grift', date: '2026-07-02' },
+            // ── Jul 4 ──
+            { title: 'GIG — Grift: Warren Store After-Parade', time: 'All Day', calendar: 'Grift', date: '2026-07-04' },
+            // ── Jul 8 ──
+            { title: 'GIG — Grift at Double E', time: 'All Day', calendar: 'Grift', date: '2026-07-08' },
+            // ── Jul 10 ──
+            { title: 'GIG — Grift: Mad Marathon (Round Barn Farm, Waitsfield)', time: 'All Day', calendar: 'Grift', date: '2026-07-10' },
+            // ── Jul 17 ──
+            { title: 'GIG — Grift/Ramblers: Bryan Meriam Party (Madison, CT)', time: 'All Day', calendar: 'Grift', date: '2026-07-17' },
+            // ── Jul 18 ──
+            { title: 'GIG — Grift Wedding: Kelly + Wesley Johnston (OQ Farm, Bridgewater Corners VT)', time: 'All Day', calendar: 'Grift', date: '2026-07-18' },
+            // ── Jul 24 ──
+            { title: 'GIG — Grift: Jill Spera / Charlotte Crossings Event', time: 'All Day', calendar: 'Grift', date: '2026-07-24' },
+            // ── Jul 25 ──
+            { title: 'GIG — Grift Wedding: Conor Bradley + Haley (Hildene, Manchester VT)', time: 'All Day', calendar: 'Grift', date: '2026-07-25' },
+            // ── Jul 31 ──
+            { title: 'GIG — Griftful Dead at Skinny Pancake (outdoors)', time: 'All Day', calendar: 'Grift', date: '2026-07-31' },
+            // ── Aug 1 ──
+            { title: 'GIG — Grift Wedding + Female Vocalist: Katherine Furber (Round Barn Farm, Waitsfield)', time: 'All Day', calendar: 'Grift', date: '2026-08-01' },
         ];
 
         const STORAGE_HABITS   = 'habits_data';
