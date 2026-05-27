@@ -48,6 +48,29 @@
             z-index: 1;
         }
 
+        @media (max-width: 760px) {
+            body {
+                background-size: auto 140%;
+                background-position: top center;
+            }
+
+            .container {
+                padding-top: 20px;
+            }
+
+            .panels {
+                gap: 16px;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
         h1 {
             text-align: center;
             margin-bottom: 30px;
@@ -464,14 +487,14 @@
             margin-top: 15px;
         }
 
-        /* ==================== SOMEDAY BUCKET ==================== */
+        /* ==================== BRAIN DUMP ==================== */
         .someday-panel {
             border: 1px solid #3d2a5a;
             border-radius: 12px;
             padding: 24px;
             background: rgba(30, 20, 50, 0.8);
             backdrop-filter: blur(10px);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .someday-panel h2 {
@@ -486,22 +509,145 @@
         .someday-subtitle {
             font-size: 12px;
             color: #6e6080;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
-        .someday-form {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #3d2a5a;
-            margin-bottom: 15px;
-        }
-
-        .someday-form.open {
+        /* Dictation button */
+        .dictation-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border: 1px solid #c084fc;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            letter-spacing: 0.2px;
         }
 
+        .dictation-btn:hover {
+            background: linear-gradient(135deg, #a855f7, #c084fc);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);
+        }
+
+        .dictation-btn.listening {
+            background: linear-gradient(135deg, #b91c1c, #dc2626);
+            border-color: #f87171;
+            animation: pulse-ring 1.4s ease-out infinite;
+        }
+
+        .dictation-btn.listening:hover {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+        }
+
+        .dictation-btn.unsupported {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .dictation-btn.unsupported:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        @keyframes pulse-ring {
+            0%   { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.5); }
+            70%  { box-shadow: 0 0 0 12px rgba(248, 113, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
+        }
+
+        .brain-type-row {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+            margin-bottom: 6px;
+        }
+
+        .brain-type-row input[type="text"] {
+            flex: 1;
+            width: auto;
+        }
+
+        .save-btn {
+            white-space: nowrap;
+            padding: 10px 18px;
+            flex-shrink: 0;
+        }
+
+        .brain-notes-toggle {
+            background: none;
+            border: none;
+            color: #5a4a70;
+            font-size: 12px;
+            padding: 2px 0;
+            cursor: pointer;
+            text-align: left;
+            display: block;
+            margin-bottom: 6px;
+            transition: color 0.15s;
+        }
+
+        .brain-notes-toggle:hover {
+            color: #9b7aaf;
+            background: none;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #somedayNotes {
+            display: none;
+            min-height: 48px;
+            margin-bottom: 8px;
+        }
+
+        #somedayNotes.open {
+            display: block;
+        }
+
+        /* Tag filter bar */
+        .tag-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 12px 0 14px;
+        }
+
+        .tag-filter-bar:empty {
+            margin: 0;
+        }
+
+        .filter-chip {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            transition: opacity 0.15s;
+            user-select: none;
+            opacity: 0.5;
+            background: transparent;
+        }
+
+        .filter-chip:hover {
+            opacity: 0.85;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .filter-chip.active {
+            opacity: 1;
+        }
+
+        /* Entry grid */
         .someday-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -532,6 +678,20 @@
             font-style: italic;
         }
 
+        .entry-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 7px;
+        }
+
+        .entry-tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
         .someday-actions {
             display: flex;
             gap: 5px;
@@ -559,12 +719,34 @@
             font-size: 13px;
             letter-spacing: 0.5px;
         }
+
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            body { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Josh Panda</h1>
         <div class="current-date" id="currentDate"></div>
+
+        <!-- BRAIN DUMP -->
+        <div class="someday-panel">
+            <h2>BRAIN DUMP</h2>
+            <div class="someday-subtitle">Dump it here before you lose it. Tag with #hashtags. Promote to a task when ready.</div>
+            <button class="dictation-btn" id="dictationBtn" onclick="toggleDictation()">
+                <span id="dictationIcon">🎤</span>
+                <span id="dictationLabel">Tap to Speak</span>
+            </button>
+            <div class="brain-type-row">
+                <input type="text" id="somedayText" placeholder="or type here..." />
+                <button class="save-btn" onclick="addSomeday()">Save</button>
+            </div>
+            <button class="brain-notes-toggle" id="notesToggle" onclick="toggleSomedayNotes()">+ add context</button>
+            <textarea id="somedayNotes" placeholder="Context (optional)..."></textarea>
+            <div id="tagFilterBar" class="tag-filter-bar"></div>
+            <div id="somedayContainer" class="someday-grid"></div>
+        </div>
 
         <div class="panels">
             <!-- TODAY PANEL -->
@@ -644,18 +826,6 @@
             </div>
         </div>
 
-        <!-- SOMEDAY / BRAIN DUMP -->
-        <div class="someday-panel">
-            <h2>SOMEDAY / BRAIN DUMP</h2>
-            <div class="someday-subtitle">Ideas and things you're not ready to schedule yet. Nothing leaves this bucket unless you want it to.</div>
-            <button class="task-form-toggle" onclick="toggleSomedayForm()">+ Dump an Idea</button>
-            <div class="someday-form" id="somedayForm">
-                <input type="text" id="somedayText" placeholder="What's the idea?" />
-                <textarea id="somedayNotes" placeholder="Any context (optional)..." style="min-height:48px;"></textarea>
-                <button onclick="addSomeday()">Save Idea</button>
-            </div>
-            <div id="somedayContainer" class="someday-grid"></div>
-        </div>
     </div>
 
     <script>
@@ -777,6 +947,107 @@
         const STORAGE_PIPELINE_DATE = 'pipeline_month';
         const STORAGE_SOMEDAY  = 'someday_data';
 
+        // ==================== TAG SYSTEM ====================
+        const TAG_COLORS = {
+            '#music':    { bg: 'rgba(188,142,247,0.2)', color: '#bc8ef7' },
+            '#showman':  { bg: 'rgba(124,142,247,0.2)', color: '#7c8ef7' },
+            '#gig':      { bg: 'rgba(248,113,113,0.2)', color: '#f87171' },
+            '#fitness':  { bg: 'rgba(74,222,128,0.2)',  color: '#4ade80' },
+            '#admin':    { bg: 'rgba(96,165,250,0.2)',  color: '#60a5fa' },
+            '#social':   { bg: 'rgba(251,191,36,0.2)',  color: '#fbbf24' },
+            '#personal': { bg: 'rgba(192,132,252,0.2)', color: '#c084fc' },
+        };
+
+        const TAG_PALETTE = [
+            { bg: 'rgba(52,211,153,0.2)',  color: '#34d399' },
+            { bg: 'rgba(251,146,60,0.2)',  color: '#fb923c' },
+            { bg: 'rgba(232,121,249,0.2)', color: '#e879f9' },
+            { bg: 'rgba(34,211,238,0.2)',  color: '#22d3ee' },
+            { bg: 'rgba(245,158,11,0.2)',  color: '#f59e0b' },
+        ];
+
+        let activeTagFilter = null;
+
+        function tagColor(tag) {
+            const lower = tag.toLowerCase();
+            if (TAG_COLORS[lower]) return TAG_COLORS[lower];
+            let hash = 0;
+            for (const ch of lower) hash = (hash * 31 + ch.charCodeAt(0)) & 0xffffffff;
+            return TAG_PALETTE[Math.abs(hash) % TAG_PALETTE.length];
+        }
+
+        function extractTags(text) {
+            const matches = text.match(/#[a-zA-Z][a-zA-Z0-9_]*/g) || [];
+            return [...new Set(matches.map(t => t.toLowerCase()))];
+        }
+
+        // ==================== SPEECH RECOGNITION ====================
+        let recognition = null;
+        let isListening = false;
+
+        function initSpeechRecognition() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const btn = document.getElementById('dictationBtn');
+            if (!SR) {
+                btn.classList.add('unsupported');
+                btn.title = 'Voice input requires HTTPS — works when opened from your GitHub Pages URL';
+                return;
+            }
+            recognition = new SR();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (e) => {
+                let transcript = '';
+                for (let i = 0; i < e.results.length; i++) {
+                    transcript += e.results[i][0].transcript;
+                }
+                document.getElementById('somedayText').value = transcript;
+            };
+
+            recognition.onend = () => setListeningState(false);
+
+            recognition.onerror = (e) => {
+                setListeningState(false);
+                if (e.error === 'not-allowed') {
+                    const btn = document.getElementById('dictationBtn');
+                    btn.classList.add('unsupported');
+                    document.getElementById('dictationLabel').textContent = 'Mic access denied';
+                }
+            };
+        }
+
+        function setListeningState(listening) {
+            isListening = listening;
+            const btn = document.getElementById('dictationBtn');
+            const icon = document.getElementById('dictationIcon');
+            const label = document.getElementById('dictationLabel');
+            if (listening) {
+                btn.classList.add('listening');
+                icon.textContent = '⏹';
+                label.textContent = 'Listening...';
+            } else {
+                btn.classList.remove('listening');
+                icon.textContent = '🎤';
+                label.textContent = 'Tap to Speak';
+            }
+        }
+
+        function toggleDictation() {
+            if (!recognition) {
+                document.getElementById('somedayText').focus();
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+            } else {
+                document.getElementById('somedayText').value = '';
+                recognition.start();
+                setListeningState(true);
+            }
+        }
+
         // ==================== INIT ====================
         function init() {
             updateCurrentDate();
@@ -786,6 +1057,7 @@
             renderTasks();
             renderReleasePipeline();
             renderSomeday();
+            initSpeechRecognition();
             setupEventListeners();
         }
 
@@ -1148,24 +1420,29 @@
         }
 
         // ==================== SOMEDAY / BRAIN DUMP ====================
-        function toggleSomedayForm() {
-            const form = document.getElementById('somedayForm');
-            form.classList.toggle('open');
-            if (form.classList.contains('open')) {
-                document.getElementById('somedayText').focus();
-            }
+        function toggleSomedayNotes() {
+            const notes = document.getElementById('somedayNotes');
+            const toggle = document.getElementById('notesToggle');
+            const open = notes.classList.toggle('open');
+            toggle.textContent = open ? '− add context' : '+ add context';
+            if (open) notes.focus();
         }
 
         function addSomeday() {
             const text = document.getElementById('somedayText').value.trim();
             if (!text) return;
             const notes = document.getElementById('somedayNotes').value.trim();
+            const tags = extractTags(text);
             const data = getStoredData(STORAGE_SOMEDAY) || [];
-            data.unshift({ id: Date.now(), text, notes, createdAt: new Date().toISOString() });
+            data.unshift({ id: Date.now(), text, notes, tags, createdAt: new Date().toISOString() });
             saveData(STORAGE_SOMEDAY, data);
             document.getElementById('somedayText').value = '';
             document.getElementById('somedayNotes').value = '';
-            document.getElementById('somedayForm').classList.remove('open');
+            const notesEl = document.getElementById('somedayNotes');
+            if (notesEl.classList.contains('open')) {
+                notesEl.classList.remove('open');
+                document.getElementById('notesToggle').textContent = '+ add context';
+            }
             renderSomeday();
         }
 
@@ -1194,27 +1471,71 @@
             document.getElementById('taskTitle').focus();
         }
 
+        function filterByTag(tag) {
+            activeTagFilter = activeTagFilter === tag ? null : tag;
+            renderSomeday();
+        }
+
+        function renderTagFilterBar(data) {
+            const bar = document.getElementById('tagFilterBar');
+            const allTags = [...new Set(data.flatMap(item => item.tags || []))].sort();
+            if (allTags.length === 0) {
+                bar.innerHTML = '';
+                return;
+            }
+            bar.innerHTML = allTags.map(tag => {
+                const c = tagColor(tag);
+                const active = activeTagFilter === tag;
+                return `<button class="filter-chip ${active ? 'active' : ''}"
+                    style="color:${c.color};border-color:${active ? c.color : 'transparent'};background:${active ? c.bg : 'transparent'};"
+                    onclick="filterByTag(${JSON.stringify(tag)})">${tag}</button>`;
+            }).join('');
+        }
+
         function renderSomeday() {
             const container = document.getElementById('somedayContainer');
-            const data = getStoredData(STORAGE_SOMEDAY) || [];
+            let data = getStoredData(STORAGE_SOMEDAY) || [];
+
+            // Backfill tags for entries saved before tagging existed
+            data = data.map(item => ({ ...item, tags: item.tags || extractTags(item.text) }));
+
+            renderTagFilterBar(data);
+
+            const filtered = activeTagFilter
+                ? data.filter(item => (item.tags || []).includes(activeTagFilter))
+                : data;
 
             if (data.length === 0) {
                 container.innerHTML = '<div class="empty-state">Nothing here yet — dump whatever\'s rattling around</div>';
                 return;
             }
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">No entries tagged ${escapeHtml(activeTagFilter)}</div>`;
+                return;
+            }
 
-            container.innerHTML = data.map(item => `
-                <div class="someday-item">
-                    <div class="someday-text">
-                        ${escapeHtml(item.text)}
-                        ${item.notes ? `<div class="someday-notes">${escapeHtml(item.notes)}</div>` : ''}
+            container.innerHTML = filtered.map(item => {
+                const tagsHtml = (item.tags || []).length
+                    ? `<div class="entry-tags">${item.tags.map(tag => {
+                        const c = tagColor(tag);
+                        return `<span class="entry-tag" style="background:${c.bg};color:${c.color};">${escapeHtml(tag)}</span>`;
+                      }).join('')}</div>`
+                    : '';
+
+                return `
+                    <div class="someday-item">
+                        <div class="someday-text">
+                            ${escapeHtml(item.text)}
+                            ${item.notes ? `<div class="someday-notes">${escapeHtml(item.notes)}</div>` : ''}
+                            ${tagsHtml}
+                        </div>
+                        <div class="someday-actions">
+                            <button class="secondary" onclick="promoteSomeday(${item.id})" title="Move to Tasks">→ Task</button>
+                            <button class="danger" onclick="deleteSomeday(${item.id})" title="Delete">✕</button>
+                        </div>
                     </div>
-                    <div class="someday-actions">
-                        <button class="secondary" onclick="promoteSomeday(${item.id})" title="Move to Tasks">→ Task</button>
-                        <button class="danger" onclick="deleteSomeday(${item.id})" title="Delete">✕</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // ==================== STORAGE ====================
