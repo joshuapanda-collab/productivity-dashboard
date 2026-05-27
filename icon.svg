@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <!-- Background -->
+  <rect width="180" height="180" fill="#1a0f2e"/>
+  <!-- Ears -->
+  <circle cx="48" cy="50" r="22" fill="#2d1050"/>
+  <circle cx="48" cy="50" r="13" fill="#4a1a8a"/>
+  <circle cx="132" cy="50" r="22" fill="#2d1050"/>
+  <circle cx="132" cy="50" r="13" fill="#4a1a8a"/>
+  <!-- Face -->
+  <ellipse cx="90" cy="98" rx="56" ry="52" fill="#f0e8ff"/>
+  <!-- Eye patches -->
+  <ellipse cx="72" cy="90" rx="15" ry="17" fill="#2d1050"/>
+  <ellipse cx="108" cy="90" rx="15" ry="17" fill="#2d1050"/>
+  <!-- Eyes -->
+  <circle cx="72" cy="90" r="8" fill="white"/>
+  <circle cx="108" cy="90" r="8" fill="white"/>
+  <!-- Pupils -->
+  <circle cx="74" cy="90" r="4.5" fill="#1a0f2e"/>
+  <circle cx="110" cy="90" r="4.5" fill="#1a0f2e"/>
+  <!-- Eye shine -->
+  <circle cx="75.5" cy="88" r="1.5" fill="white"/>
+  <circle cx="111.5" cy="88" r="1.5" fill="white"/>
+  <!-- Nose -->
+  <ellipse cx="90" cy="111" rx="9" ry="7" fill="#c084fc"/>
+  <!-- Smile -->
+  <path d="M 78 120 Q 90 131 102 120" stroke="#9b5ed8" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

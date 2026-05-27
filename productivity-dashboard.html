@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Productivity Dashboard</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dashboard">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="theme-color" content="#1a0f2e">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0a1a 0%, #1a0f2e 100%);
+            color: #e5e0f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #c084fc;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .panels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            border: 1px solid #3d2a5a;
+            border-radius: 12px;
+            padding: 24px;
+            background: rgba(30, 20, 50, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel h2 {
+            color: #c084fc;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid #3d2a5a;
+            padding-bottom: 10px;
+        }
+
+        /* ==================== TODAY PANEL ==================== */
+        .today-subsection {
+            margin-bottom: 18px;
+        }
+
+        .today-subsection:last-child {
+            margin-bottom: 0;
+        }
+
+        .today-subsection-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .today-subsection-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #7c6a99;
+            text-transform: uppercase;
+        }
+
+        .today-divider {
+            border: none;
+            border-top: 1px solid rgba(61, 42, 90, 0.7);
+            margin: 16px 0;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: #7c6a99;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 0 2px;
+            line-height: 1;
+            transition: all 0.3s;
+            box-shadow: none;
+        }
+
+        .refresh-btn:hover {
+            color: #c084fc;
+            background: none;
+            box-shadow: none;
+            transform: rotate(180deg);
+        }
+
+        /* Calendar events */
+        .calendar-event {
+            display: flex;
+            align-items: flex-start;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(192, 132, 252, 0.08);
+            gap: 10px;
+        }
+
+        .calendar-event:last-child {
+            border-bottom: none;
+        }
+
+        .cal-time {
+            font-size: 12px;
+            color: #8b7fa8;
+            white-space: nowrap;
+            min-width: 72px;
+            padding-top: 1px;
+        }
+
+        .cal-title {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .cal-calendar-name {
+            font-size: 11px;
+            color: #5c5070;
+            margin-top: 1px;
+        }
+
+        .cal-status {
+            font-size: 13px;
+            color: #6e6080;
+            font-style: italic;
+            padding: 6px 0;
+        }
+
+
+        /* ==================== HABITS ==================== */
+        .habit-item {
+            display: flex;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(192, 132, 252, 0.08);
+        }
+
+        .habit-item:last-child {
+            border-bottom: none;
+        }
+
+        .habit-checkbox {
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #c084fc;
+            flex-shrink: 0;
+        }
+
+        .habit-label {
+            cursor: pointer;
+            flex: 1;
+            user-select: none;
+            font-size: 14px;
+        }
+
+        .habit-checkbox:checked + .habit-label {
+            color: #4e4460;
+            text-decoration: line-through;
+        }
+
+        /* ==================== TASKS PANEL ==================== */
+        .task-form {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3d2a5a;
+            margin-bottom: 15px;
+        }
+
+        .task-form.open {
+            display: flex;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid #3d2a5a;
+            color: #e5e0f0;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #c084fc;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        button {
+            background-color: #a855f7;
+            color: white;
+            border: 1px solid #c084fc;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: #c084fc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(192, 132, 252, 0.3);
+        }
+
+        button.secondary {
+            background-color: rgba(192, 132, 252, 0.15);
+            border-color: #6b4d8a;
+            color: #c084fc;
+        }
+
+        button.secondary:hover {
+            background-color: rgba(192, 132, 252, 0.28);
+        }
+
+        button.danger {
+            background-color: rgba(218, 54, 51, 0.25);
+            border-color: #7a2020;
+            color: #f87171;
+        }
+
+        button.danger:hover {
+            background-color: #da3633;
+            color: white;
+        }
+
+        .task-form-toggle {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-item {
+            padding: 12px;
+            border-left: 4px solid #30363d;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .task-item.completed {
+            opacity: 0.45;
+        }
+
+        .task-item.cat-music    { border-left-color: #bc8ef7; }
+        .task-item.cat-fitness  { border-left-color: #3fb950; }
+        .task-item.cat-admin    { border-left-color: #79c0ff; }
+        .task-item.cat-social   { border-left-color: #d29922; }
+        .task-item.cat-gig      { border-left-color: #f85149; }
+        .task-item.cat-personal { border-left-color: #58a6ff; }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            font-size: 11px;
+            color: #8b949e;
+            margin-top: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .task-category {
+            padding: 2px 7px;
+            background-color: rgba(192, 132, 252, 0.12);
+            border-radius: 4px;
+        }
+
+        .task-priority {
+            padding: 2px 7px;
+            background-color: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+            margin-left: 10px;
+        }
+
+        .task-actions button {
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+
+        .task-checkbox {
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #c084fc;
+            flex-shrink: 0;
+        }
+
+        /* ==================== RELEASE PIPELINE ==================== */
+        .pipeline-week {
+            margin-bottom: 20px;
+        }
+
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid #3d2a5a;
+        }
+
+        .week-header.current {
+            border-color: #c084fc;
+            background-color: rgba(192, 132, 252, 0.1);
+        }
+
+        .week-title {
+            font-weight: 600;
+            color: #c084fc;
+        }
+
+        .week-checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-left: 12px;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+        }
+
+        .milestone-checkbox {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #c084fc;
+        }
+
+        .milestone-label {
+            cursor: pointer;
+            user-select: none;
+            font-size: 13px;
+        }
+
+        .milestone-checkbox:checked + .milestone-label {
+            color: #6e7681;
+            text-decoration: line-through;
+        }
+
+        .progress-bar {
+            margin: 20px 0;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #3d2a5a;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #c084fc);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .reset-button {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        /* ==================== SOMEDAY BUCKET ==================== */
+        .someday-panel {
+            border: 1px solid #3d2a5a;
+            border-radius: 12px;
+            padding: 24px;
+            background: rgba(30, 20, 50, 0.8);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .someday-panel h2 {
+            color: #c084fc;
+            margin-bottom: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid #3d2a5a;
+            padding-bottom: 10px;
+        }
+
+        .someday-subtitle {
+            font-size: 12px;
+            color: #6e6080;
+            margin-bottom: 15px;
+        }
+
+        .someday-form {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3d2a5a;
+            margin-bottom: 15px;
+        }
+
+        .someday-form.open {
+            display: flex;
+        }
+
+        .someday-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .someday-item {
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #4a2d7a;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .someday-text {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .someday-notes {
+            font-size: 12px;
+            color: #7c6a99;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .someday-actions {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .someday-actions button {
+            padding: 3px 9px;
+            font-size: 11px;
+        }
+
+        /* ==================== UTILITY ==================== */
+        .empty-state {
+            color: #5c5070;
+            text-align: center;
+            padding: 16px 0;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .current-date {
+            text-align: center;
+            color: #7c6a99;
+            margin-bottom: 24px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Josh Panda</h1>
+        <div class="current-date" id="currentDate"></div>
+
+        <div class="panels">
+            <!-- TODAY PANEL -->
+            <div class="panel">
+                <h2 id="todayHeader">TODAY</h2>
+
+                <!-- Habits -->
+                <div class="today-subsection">
+                    <div class="today-subsection-header">
+                        <span class="today-subsection-title">Habits</span>
+                    </div>
+                    <div id="habitsContainer"></div>
+                </div>
+
+                <hr class="today-divider">
+
+                <!-- Calendar -->
+                <div class="today-subsection">
+                    <div class="today-subsection-header">
+                        <span class="today-subsection-title">Calendar</span>
+                    </div>
+                    <div id="calendarContainer"></div>
+                </div>
+
+                <hr class="today-divider">
+
+                <!-- Due today -->
+                <div class="today-subsection">
+                    <div class="today-subsection-header">
+                        <span class="today-subsection-title">Due Today</span>
+                    </div>
+                    <div id="dueTodayContainer"></div>
+                </div>
+            </div>
+
+            <!-- TASKS PANEL -->
+            <div class="panel">
+                <h2>TASKS</h2>
+                <button class="task-form-toggle" onclick="toggleTaskForm()">+ Add Task</button>
+                <div class="task-form" id="taskForm">
+                    <input type="text" id="taskTitle" placeholder="Task title..." />
+                    <div class="form-row">
+                        <select id="taskCategory">
+                            <option value="music">Music</option>
+                            <option value="fitness">Fitness</option>
+                            <option value="admin">Admin</option>
+                            <option value="social">Social</option>
+                            <option value="gig">Gig</option>
+                            <option value="personal">Personal</option>
+                        </select>
+                        <select id="taskPriority">
+                            <option value="low">Low Priority</option>
+                            <option value="medium" selected>Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="date" id="taskDeadline" />
+                        <input type="time" id="taskTime" />
+                    </div>
+                    <textarea id="taskNotes" placeholder="Notes (optional)..."></textarea>
+                    <button onclick="addTask()">Add Task</button>
+                </div>
+                <div id="tasksContainer" class="tasks-list"></div>
+            </div>
+
+            <!-- RELEASE PIPELINE PANEL -->
+            <div class="panel">
+                <h2>RELEASE PIPELINE</h2>
+                <div id="pipelineContainer"></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;">
+                        <span id="progressText">0%</span>
+                    </div>
+                </div>
+                <button class="secondary reset-button" onclick="resetReleaseMonth()">Reset for New Month</button>
+            </div>
+        </div>
+
+        <!-- SOMEDAY / BRAIN DUMP -->
+        <div class="someday-panel">
+            <h2>SOMEDAY / BRAIN DUMP</h2>
+            <div class="someday-subtitle">Ideas and things you're not ready to schedule yet. Nothing leaves this bucket unless you want it to.</div>
+            <button class="task-form-toggle" onclick="toggleSomedayForm()">+ Dump an Idea</button>
+            <div class="someday-form" id="somedayForm">
+                <input type="text" id="somedayText" placeholder="What's the idea?" />
+                <textarea id="somedayNotes" placeholder="Any context (optional)..." style="min-height:48px;"></textarea>
+                <button onclick="addSomeday()">Save Idea</button>
+            </div>
+            <div id="somedayContainer" class="someday-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONSTANTS ====================
+        const HABITS_BY_DAY = {
+            0: [],
+            1: ['Guitar Practice (30 min)', 'Lift + Cardio'],
+            2: ['Treadmill (30 min)'],
+            3: ['Guitar Practice (30 min)', 'Lift + Cardio'],
+            4: ['Treadmill (30 min)'],
+            5: ['Guitar Practice (30 min)', 'Lift + Cardio', 'Pilates with Chelsea'],
+            6: []
+        };
+
+        const RELEASE_MILESTONES = [
+            ['Select & sequence tracks', 'Rough fades + edit'],
+            ['Final mix & master'],
+            ['Album art ready', 'Spotify canvas loops', 'Lyrics entered', 'Upload & schedule release'],
+            ['Socials + website update']
+        ];
+
+        // Claude edits TASKS_DATA to add tasks. Fields:
+        // id (unique string), title, category (music/fitness/admin/social/gig/personal),
+        // priority (low/medium/high), deadline (YYYY-MM-DD or ''), time (HH:MM or ''),
+        // notes (string), completed (false)
+        const TASKS_DATA = [
+            // GIG — Performances
+            { id: 'ai_001', title: 'Kahan Wedding — figure out the songs', category: 'gig', priority: 'high', deadline: '2026-06-20', time: '', notes: 'Performance on June 20', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_002', title: 'JPB Show — follow up with Kai re rehearsal', category: 'gig', priority: 'high', deadline: '2026-06-26', time: '', notes: 'Performance on June 26', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_003', title: 'Lake Party — review and alter setlist if needed', category: 'gig', priority: 'medium', deadline: '2026-08-08', time: '', notes: 'Performance on August 8', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_004', title: "Chelsea's Birthday Party — build Taylor Swift setlist", category: 'gig', priority: 'high', deadline: '2026-08-22', time: '', notes: 'Heavy Taylor Swift setlist, needs to be built from scratch. Performance August 22.', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+
+            // Chelsea's Party Planning
+            { id: 'ai_005', title: 'Follow up with Michael (DJ) — confirm date + get deposit done', category: 'personal', priority: 'high', deadline: '', time: '', notes: "Chelsea's birthday party planning", completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+
+            // Josh Panda Online Presence
+            { id: 'ai_006', title: 'Wikipedia — create Josh Panda page', category: 'admin', priority: 'medium', deadline: '', time: '', notes: 'Josh Panda online presence cleanup', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_007', title: 'IMDB — make Josh Panda page look legit', category: 'admin', priority: 'medium', deadline: '', time: '', notes: 'Josh Panda online presence cleanup', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_008', title: 'MusicMatch — add lyrics and videos for released songs', category: 'admin', priority: 'medium', deadline: '', time: '', notes: 'Josh Panda online presence cleanup', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_009', title: 'AllMusic — update info and discography', category: 'admin', priority: 'medium', deadline: '', time: '', notes: 'Josh Panda online presence cleanup', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_010', title: 'Discogs — update info', category: 'admin', priority: 'medium', deadline: '', time: '', notes: 'Josh Panda online presence cleanup', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_011', title: 'Full online audit — find everywhere Josh Panda exists and make it current', category: 'admin', priority: 'medium', deadline: '', time: '', notes: 'Check all platforms, directories, and databases', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+
+            // Music / Release
+            { id: 'ai_012', title: 'In the Wild series — release one live album per month', category: 'music', priority: 'high', deadline: '', time: '', notes: 'Recurring monthly release cadence. Current pipeline should be active.', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+
+            // The Showman Project
+            { id: 'ai_013', title: 'The Showman — create booking entity name and email', category: 'music', priority: 'medium', deadline: '', time: '', notes: 'The Showman band project', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_014', title: 'The Showman — build EPK PDF', category: 'music', priority: 'medium', deadline: '', time: '', notes: 'Needs press quote. The Showman band project.', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_015', title: 'The Showman — research 50-75 performing arts centers (Northeast/Mid-Atlantic)', category: 'music', priority: 'medium', deadline: '', time: '', notes: 'For venue booking outreach. The Showman band project.', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_016', title: 'The Showman — cut 90-second sizzle reel for venue bookers', category: 'music', priority: 'medium', deadline: '', time: '', notes: 'The Showman band project', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+            { id: 'ai_017', title: 'The Showman — get one press quote for EPK', category: 'music', priority: 'medium', deadline: '', time: '', notes: 'The Showman band project', completed: false, createdAt: '2026-05-27T00:00:00.000Z' },
+        ];
+
+        // Claude injects today's events into this array whenever the user asks for a refresh.
+        // Each entry: { title, time ('9:00 AM' or 'All Day'), calendar, date ('YYYY-MM-DD') }
+        // The TODAY panel filters to show only entries matching today's date.
+        const CALENDAR_EVENTS = [
+            // { title: 'Example event', time: '9:00 AM', calendar: 'Personal', date: '2026-05-27' },
+        ];
+
+        const STORAGE_HABITS   = 'habits_data';
+        const STORAGE_TASKS    = 'tasks_data';
+        const STORAGE_PIPELINE = 'pipeline_data';
+        const STORAGE_PIPELINE_DATE = 'pipeline_month';
+        const STORAGE_SOMEDAY  = 'someday_data';
+
+        // ==================== INIT ====================
+        function init() {
+            updateCurrentDate();
+            initializeHabits();
+            seedTasks();
+            renderTodayPanel();
+            renderTasks();
+            renderReleasePipeline();
+            renderSomeday();
+            setupEventListeners();
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            const day = days[now.getDay()];
+            const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('currentDate').textContent = dateStr;
+            document.getElementById('todayHeader').textContent = `TODAY — ${day}`;
+        }
+
+        function seedTasks() {
+            let stored = getStoredData(STORAGE_TASKS) || [];
+            const storedIds = new Set(stored.map(t => String(t.id)));
+            TASKS_DATA.forEach(task => {
+                if (!storedIds.has(String(task.id))) {
+                    stored.push({ ...task, createdAt: task.createdAt || new Date().toISOString() });
+                }
+            });
+            saveData(STORAGE_TASKS, stored);
+        }
+
+        function setupEventListeners() {
+            document.getElementById('taskTitle').addEventListener('keypress', e => {
+                if (e.key === 'Enter') addTask();
+            });
+            document.getElementById('somedayText').addEventListener('keypress', e => {
+                if (e.key === 'Enter') addSomeday();
+            });
+        }
+
+        // ==================== TODAY PANEL ====================
+        function renderTodayPanel() {
+            renderHabits();
+            renderCalendar();
+            renderDueToday();
+        }
+
+        // ---- Habits ----
+        function initializeHabits() {
+            const today = new Date().toDateString();
+            let data = getStoredData(STORAGE_HABITS);
+            if (!data || data.lastDate !== today) {
+                saveData(STORAGE_HABITS, { lastDate: today, completed: {} });
+            }
+        }
+
+        function renderHabits() {
+            const dow = new Date().getDay();
+            const todaysHabits = HABITS_BY_DAY[dow];
+            const container = document.getElementById('habitsContainer');
+            const data = getStoredData(STORAGE_HABITS) || {};
+            const completed = data.completed || {};
+
+            if (!todaysHabits || todaysHabits.length === 0) {
+                container.innerHTML = '<div class="empty-state">Rest day — nothing on the schedule</div>';
+                return;
+            }
+
+            container.innerHTML = todaysHabits.map((habit, i) => {
+                const checked = completed[habit] || false;
+                const id = `habit_${i}`;
+                return `
+                    <div class="habit-item">
+                        <input type="checkbox" class="habit-checkbox" id="${id}"
+                            ${checked ? 'checked' : ''}
+                            onchange="toggleHabit(${JSON.stringify(habit)}, this.checked)"
+                        />
+                        <label class="habit-label" for="${id}">${habit}</label>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleHabit(habit, checked) {
+            let data = getStoredData(STORAGE_HABITS) || { completed: {} };
+            data.completed = data.completed || {};
+            data.completed[habit] = checked;
+            saveData(STORAGE_HABITS, data);
+            renderHabits();
+        }
+
+        // ---- Calendar ----
+        function renderCalendar() {
+            const container = document.getElementById('calendarContainer');
+            const todayStr = todayDateString();
+            const todayEvents = CALENDAR_EVENTS.filter(e => e.date === todayStr);
+
+            if (CALENDAR_EVENTS.length === 0) {
+                container.innerHTML = '<div class="cal-status">No events loaded — ask Claude to refresh</div>';
+                return;
+            }
+            if (todayEvents.length === 0) {
+                container.innerHTML = '<div class="cal-status">No events today</div>';
+                return;
+            }
+
+            // Sort: All Day first, then chronological
+            todayEvents.sort((a, b) => {
+                if (a.time === 'All Day') return -1;
+                if (b.time === 'All Day') return 1;
+                const toMins = t => {
+                    const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+                    if (!m) return 0;
+                    let h = parseInt(m[1]), mn = parseInt(m[2]);
+                    const ampm = m[3].toUpperCase();
+                    if (ampm === 'PM' && h !== 12) h += 12;
+                    if (ampm === 'AM' && h === 12) h = 0;
+                    return h * 60 + mn;
+                };
+                return toMins(a.time) - toMins(b.time);
+            });
+
+            container.innerHTML = todayEvents.map(ev => `
+                <div class="calendar-event">
+                    <div class="cal-time">${escapeHtml(ev.time)}</div>
+                    <div>
+                        <div class="cal-title">${escapeHtml(ev.title)}</div>
+                        ${ev.calendar ? `<div class="cal-calendar-name">${escapeHtml(ev.calendar)}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ---- Due Today ----
+        function renderDueToday() {
+            const container = document.getElementById('dueTodayContainer');
+            const tasks = getStoredData(STORAGE_TASKS) || [];
+            const todayStr = todayDateString();
+            const due = tasks.filter(t => t.deadline === todayStr && !t.completed);
+
+            if (due.length === 0) {
+                container.innerHTML = '<div class="empty-state">Nothing scheduled for today</div>';
+                return;
+            }
+
+            container.innerHTML = due.map(task => {
+                const id = `duetoday_${task.id}`;
+                const catColors = { music:'#bc8ef7', fitness:'#3fb950', admin:'#79c0ff', social:'#d29922', gig:'#f85149', personal:'#58a6ff' };
+                const color = catColors[task.category] || '#8b949e';
+                return `
+                    <div class="habit-item">
+                        <input type="checkbox" class="habit-checkbox" id="${id}"
+                            ${task.completed ? 'checked' : ''}
+                            onchange="toggleTaskComplete(${JSON.stringify(task.id)})"
+                        />
+                        <label class="habit-label" for="${id}">
+                            <span style="font-size:10px;padding:2px 6px;border-radius:3px;margin-right:7px;color:${color};background:rgba(255,255,255,0.06);">${task.category}</span>${escapeHtml(task.title)}
+                        </label>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== TASKS ====================
+        function toggleTaskForm() {
+            const form = document.getElementById('taskForm');
+            form.classList.toggle('open');
+            if (form.classList.contains('open')) {
+                document.getElementById('taskTitle').focus();
+            }
+        }
+
+        function addTask() {
+            const title = document.getElementById('taskTitle').value.trim();
+            if (!title) { alert('Please enter a task title'); return; }
+
+            const task = {
+                id: Date.now(),
+                title,
+                category: document.getElementById('taskCategory').value,
+                priority:  document.getElementById('taskPriority').value,
+                deadline:  document.getElementById('taskDeadline').value,
+                time:      document.getElementById('taskTime').value,
+                notes:     document.getElementById('taskNotes').value.trim(),
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            const tasks = getStoredData(STORAGE_TASKS) || [];
+            tasks.push(task);
+            saveData(STORAGE_TASKS, tasks);
+
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskNotes').value = '';
+            document.getElementById('taskDeadline').value = '';
+            document.getElementById('taskTime').value = '';
+            document.getElementById('taskForm').classList.remove('open');
+
+            renderTasks();
+            renderDueToday();
+        }
+
+        function deleteTask(id) {
+            if (!confirm('Delete this task?')) return;
+            let tasks = getStoredData(STORAGE_TASKS) || [];
+            tasks = tasks.filter(t => String(t.id) !== String(id));
+            saveData(STORAGE_TASKS, tasks);
+            renderTasks();
+            renderDueToday();
+        }
+
+        function toggleTaskComplete(id) {
+            let tasks = getStoredData(STORAGE_TASKS) || [];
+            const task = tasks.find(t => String(t.id) === String(id));
+            if (task) {
+                task.completed = !task.completed;
+                saveData(STORAGE_TASKS, tasks);
+                renderTasks();
+                renderDueToday();
+            }
+        }
+
+        function renderTasks() {
+            const container = document.getElementById('tasksContainer');
+            let tasks = getStoredData(STORAGE_TASKS) || [];
+
+            const priorityOrder = { high: 0, medium: 1, low: 2 };
+            tasks.sort((a, b) => {
+                if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                }
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            if (tasks.length === 0) {
+                container.innerHTML = '<div class="empty-state">No tasks yet</div>';
+                return;
+            }
+
+            container.innerHTML = tasks.map(task => {
+                const checkId = `task_${task.id}`;
+                let metaHtml = `<span class="task-category">${task.category}</span>
+                                <span class="task-priority">${task.priority}</span>`;
+                if (task.deadline) {
+                    metaHtml += `<span>${task.deadline}${task.time ? ' ' + task.time : ''}</span>`;
+                }
+                const notesHtml = task.notes
+                    ? `<div style="margin-top:5px;font-size:12px;color:#6e6080;">${escapeHtml(task.notes)}</div>`
+                    : '';
+
+                return `
+                    <div class="task-item ${task.completed ? 'completed' : ''} cat-${task.category}">
+                        <div style="display:flex;width:100%;align-items:flex-start;">
+                            <input type="checkbox" class="task-checkbox" id="${checkId}"
+                                ${task.completed ? 'checked' : ''}
+                                onchange="toggleTaskComplete(${JSON.stringify(task.id)})"
+                                style="margin-top:3px;"
+                            />
+                            <div class="task-content">
+                                <div class="task-title">${escapeHtml(task.title)}</div>
+                                <div class="task-meta">${metaHtml}</div>
+                                ${notesHtml}
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="danger" onclick="deleteTask(${JSON.stringify(task.id)})">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== RELEASE PIPELINE ====================
+        function initializeReleasePipeline() {
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            let data = getStoredData(STORAGE_PIPELINE);
+            const storedMonth = getStoredData(STORAGE_PIPELINE_DATE);
+
+            if (!data || storedMonth !== currentMonth) {
+                data = {};
+                RELEASE_MILESTONES.forEach((week, wi) => {
+                    data[`week_${wi}`] = {};
+                    week.forEach((_, mi) => { data[`week_${wi}`][`milestone_${mi}`] = false; });
+                });
+                saveData(STORAGE_PIPELINE, data);
+                saveData(STORAGE_PIPELINE_DATE, currentMonth);
+            }
+        }
+
+        function getCurrentWeek() {
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            return Math.min(Math.ceil((now.getDate() + firstDay.getDay()) / 7) - 1, 3);
+        }
+
+        function renderReleasePipeline() {
+            initializeReleasePipeline();
+            const container = document.getElementById('pipelineContainer');
+            const data = getStoredData(STORAGE_PIPELINE) || {};
+            const currentWeek = getCurrentWeek();
+
+            container.innerHTML = RELEASE_MILESTONES.map((milestones, wi) => {
+                const isCurrent = wi === currentWeek;
+                const weekData = data[`week_${wi}`] || {};
+                const checkboxes = milestones.map((m, mi) => {
+                    const key = `milestone_${mi}`;
+                    const checkId = `pipeline_${wi}_${mi}`;
+                    return `
+                        <div class="milestone-item">
+                            <input type="checkbox" class="milestone-checkbox" id="${checkId}"
+                                ${weekData[key] ? 'checked' : ''}
+                                onchange="toggleMilestone(${wi}, ${mi}, this.checked)"
+                            />
+                            <label class="milestone-label" for="${checkId}">${m}</label>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="pipeline-week">
+                        <div class="week-header ${isCurrent ? 'current' : ''}">
+                            <span class="week-title">Week ${wi + 1}</span>
+                            ${isCurrent ? '<span style="color:#79c0ff;font-size:12px;">← Current</span>' : ''}
+                        </div>
+                        <div class="week-checklist">${checkboxes}</div>
+                    </div>
+                `;
+            }).join('');
+
+            updateProgressBar();
+        }
+
+        function toggleMilestone(wi, mi, checked) {
+            let data = getStoredData(STORAGE_PIPELINE) || {};
+            const weekKey = `week_${wi}`;
+            if (!data[weekKey]) data[weekKey] = {};
+            data[weekKey][`milestone_${mi}`] = checked;
+            saveData(STORAGE_PIPELINE, data);
+            renderReleasePipeline();
+        }
+
+        function updateProgressBar() {
+            const data = getStoredData(STORAGE_PIPELINE) || {};
+            let total = 0, done = 0;
+            RELEASE_MILESTONES.forEach((milestones, wi) => {
+                const weekData = data[`week_${wi}`] || {};
+                milestones.forEach((_, mi) => {
+                    total++;
+                    if (weekData[`milestone_${mi}`]) done++;
+                });
+            });
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressText').textContent = pct + '%';
+        }
+
+        function resetReleaseMonth() {
+            if (!confirm('Reset release pipeline for a new month? This will clear all checkmarks.')) return;
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const data = {};
+            RELEASE_MILESTONES.forEach((week, wi) => {
+                data[`week_${wi}`] = {};
+                week.forEach((_, mi) => { data[`week_${wi}`][`milestone_${mi}`] = false; });
+            });
+            saveData(STORAGE_PIPELINE, data);
+            saveData(STORAGE_PIPELINE_DATE, currentMonth);
+            renderReleasePipeline();
+        }
+
+        // ==================== SOMEDAY / BRAIN DUMP ====================
+        function toggleSomedayForm() {
+            const form = document.getElementById('somedayForm');
+            form.classList.toggle('open');
+            if (form.classList.contains('open')) {
+                document.getElementById('somedayText').focus();
+            }
+        }
+
+        function addSomeday() {
+            const text = document.getElementById('somedayText').value.trim();
+            if (!text) return;
+            const notes = document.getElementById('somedayNotes').value.trim();
+            const data = getStoredData(STORAGE_SOMEDAY) || [];
+            data.unshift({ id: Date.now(), text, notes, createdAt: new Date().toISOString() });
+            saveData(STORAGE_SOMEDAY, data);
+            document.getElementById('somedayText').value = '';
+            document.getElementById('somedayNotes').value = '';
+            document.getElementById('somedayForm').classList.remove('open');
+            renderSomeday();
+        }
+
+        function deleteSomeday(id) {
+            if (!confirm('Delete this idea?')) return;
+            let data = getStoredData(STORAGE_SOMEDAY) || [];
+            data = data.filter(item => item.id !== id);
+            saveData(STORAGE_SOMEDAY, data);
+            renderSomeday();
+        }
+
+        function promoteSomeday(id) {
+            const data = getStoredData(STORAGE_SOMEDAY) || [];
+            const item = data.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('taskTitle').value = item.text;
+            document.getElementById('taskNotes').value = item.notes || '';
+            document.getElementById('taskForm').classList.add('open');
+
+            const remaining = data.filter(i => i.id !== id);
+            saveData(STORAGE_SOMEDAY, remaining);
+            renderSomeday();
+
+            document.getElementById('taskTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('taskTitle').focus();
+        }
+
+        function renderSomeday() {
+            const container = document.getElementById('somedayContainer');
+            const data = getStoredData(STORAGE_SOMEDAY) || [];
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="empty-state">Nothing here yet — dump whatever\'s rattling around</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(item => `
+                <div class="someday-item">
+                    <div class="someday-text">
+                        ${escapeHtml(item.text)}
+                        ${item.notes ? `<div class="someday-notes">${escapeHtml(item.notes)}</div>` : ''}
+                    </div>
+                    <div class="someday-actions">
+                        <button class="secondary" onclick="promoteSomeday(${item.id})" title="Move to Tasks">→ Task</button>
+                        <button class="danger" onclick="deleteSomeday(${item.id})" title="Delete">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== STORAGE ====================
+        function saveData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function getStoredData(key) {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : null;
+        }
+
+        function todayDateString() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ==================== ENTRY POINT ====================
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
