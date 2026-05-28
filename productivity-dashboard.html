@@ -1474,7 +1474,7 @@
             }
             grid.innerHTML = GALLERY_IMAGES.map(filename => {
                 const safe = escapeHtml(filename);
-                return `<img class="gallery-thumb" src="${safe}" alt="${safe}" loading="lazy" onclick="openLightbox(${JSON.stringify(filename)})" />`;
+                return `<img class="gallery-thumb" src="${safe}" alt="${safe}" loading="lazy" data-src="${safe}" onclick="openLightbox(this.dataset.src)" />`;
             }).join('');
         }
 
