@@ -243,6 +243,30 @@
             box-shadow: none;
         }
 
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(30, 20, 50, 0.7);
+            border: 1px solid #3d2a5a;
+            color: #e5e0f0;
+            font-size: 48px;
+            width: 56px;
+            height: 80px;
+            padding: 0;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            line-height: 1;
+            user-select: none;
+        }
+        .lightbox-nav:hover { background: rgba(192, 132, 252, 0.3); border-color: #c084fc; }
+        .lightbox-prev { left: 12px; }
+        .lightbox-next { right: 12px; }
+
         /* ==================== COLLAPSIBLE PANELS ==================== */
         .panel-header {
             cursor: pointer;
@@ -913,7 +937,9 @@
         <!-- Lightbox (lives outside gallery so z-index works everywhere) -->
         <div class="lightbox" id="lightbox" onclick="closeLightbox()">
             <button class="lightbox-close" onclick="event.stopPropagation(); closeLightbox()">✕</button>
+            <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); lightboxNav(-1)">&#8249;</button>
             <img class="lightbox-img" id="lightboxImg" src="" alt="" onclick="event.stopPropagation()" />
+            <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); lightboxNav(1)">&#8250;</button>
         </div>
 
         <!-- Dashboard view -->
@@ -1478,15 +1504,34 @@
             }).join('');
         }
 
+        let lightboxIndex = 0;
+        let touchStartX = 0;
+
         function openLightbox(src) {
+            lightboxIndex = GALLERY_IMAGES.indexOf(src);
+            if (lightboxIndex === -1) lightboxIndex = 0;
             document.getElementById('lightboxImg').src = src;
             document.getElementById('lightbox').classList.add('open');
+        }
+
+        function lightboxNav(dir) {
+            lightboxIndex = (lightboxIndex + dir + GALLERY_IMAGES.length) % GALLERY_IMAGES.length;
+            document.getElementById('lightboxImg').src = GALLERY_IMAGES[lightboxIndex];
         }
 
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('open');
             document.getElementById('lightboxImg').src = '';
         }
+
+        // Swipe support
+        document.getElementById('lightbox').addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].clientX;
+        }, { passive: true });
+        document.getElementById('lightbox').addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 50) lightboxNav(dx < 0 ? 1 : -1);
+        }, { passive: true });
 
         // ==================== COLLAPSIBLE PANELS ====================
         function togglePanel(headerEl) {
@@ -1553,6 +1598,8 @@
             });
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') lightboxNav(1);
+                if (e.key === 'ArrowLeft') lightboxNav(-1);
             });
         }
 
