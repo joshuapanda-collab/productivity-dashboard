@@ -1499,7 +1499,8 @@
                 grid.innerHTML = '<div class="gallery-empty">No images yet — add filenames to GALLERY_IMAGES in the JS</div>';
                 return;
             }
-            grid.innerHTML = GALLERY_IMAGES.map(filename => {
+            const shuffled = [...GALLERY_IMAGES].sort(() => Math.random() - 0.5);
+            grid.innerHTML = shuffled.map(filename => {
                 const safe = escapeHtml(filename);
                 return `<img class="gallery-thumb" src="${safe}" alt="${safe}" loading="lazy" data-src="${safe}" onclick="openLightbox(this.dataset.src)" />`;
             }).join('');
@@ -1507,17 +1508,20 @@
 
         let lightboxIndex = 0;
         let touchStartX = 0;
+        let lightboxImages = [];
 
         function openLightbox(src) {
-            lightboxIndex = GALLERY_IMAGES.indexOf(src);
+            // Use the currently displayed shuffled order from the grid
+            lightboxImages = Array.from(document.querySelectorAll('#galleryGrid img')).map(img => img.dataset.src);
+            lightboxIndex = lightboxImages.indexOf(src);
             if (lightboxIndex === -1) lightboxIndex = 0;
             document.getElementById('lightboxImg').src = src;
             document.getElementById('lightbox').classList.add('open');
         }
 
         function lightboxNav(dir) {
-            lightboxIndex = (lightboxIndex + dir + GALLERY_IMAGES.length) % GALLERY_IMAGES.length;
-            document.getElementById('lightboxImg').src = GALLERY_IMAGES[lightboxIndex];
+            lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
+            document.getElementById('lightboxImg').src = lightboxImages[lightboxIndex];
         }
 
         function closeLightbox() {
