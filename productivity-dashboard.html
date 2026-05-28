@@ -235,6 +235,17 @@
             z-index: 1001;
             line-height: 1;
         }
+        @media (max-width: 768px) {
+            .lightbox-close {
+                top: auto;
+                bottom: 36px;
+                right: 50%;
+                transform: translateX(50%);
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+        }
 
         .lightbox-close:hover {
             background: rgba(192, 132, 252, 0.3);
@@ -1530,12 +1541,16 @@
         }
 
         // Swipe support
+        let touchStartY = 0;
         document.getElementById('lightbox').addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].clientX;
+            touchStartY = e.changedTouches[0].clientY;
         }, { passive: true });
         document.getElementById('lightbox').addEventListener('touchend', e => {
             const dx = e.changedTouches[0].clientX - touchStartX;
-            if (Math.abs(dx) > 50) lightboxNav(dx < 0 ? 1 : -1);
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(dy) > Math.abs(dx) && dy > 80) { closeLightbox(); return; }
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) lightboxNav(dx < 0 ? 1 : -1);
         }, { passive: true });
 
         // ==================== COLLAPSIBLE PANELS ====================
